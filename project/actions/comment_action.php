@@ -15,3 +15,4 @@ $stmt->execute([$userId, $comment]);
 
 header("Location: ../public/comments.php");
 exit;// teste dec 
+// teste
