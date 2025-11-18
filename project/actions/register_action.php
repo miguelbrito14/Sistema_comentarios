@@ -10,9 +10,9 @@ $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, 
 
 try {
     $stmt->execute([$username, $email, $password]);
+    $_SESSION['flash_success'] = "Conta criada com sucesso! Faça login.";
     header("Location: ../public/login.php");
     exit;
-
 } catch (PDOException $e) {
     $_SESSION['flash'] = "Erro ao registrar: " . $e->getMessage();
     header("Location: ../public/register.php");

@@ -9,10 +9,10 @@ if (!isset($_SESSION['user'])) {
 
 $comment = trim($_POST['comment']);
 $userId = $_SESSION['user']['id'];
+$parentId = $_POST['parent_id'] ?? null;
 
-$stmt = $pdo->prepare("INSERT INTO comments (user_id, comment) VALUES (?, ?)");
-$stmt->execute([$userId, $comment]);
+$stmt = $pdo->prepare("INSERT INTO comments (user_id, comment, parent_id) VALUES (?, ?, ?)");
+$stmt->execute([$userId, $comment, $parentId]);
 
 header("Location: ../public/comments.php");
-exit;// teste dec 
-// teste
+exit;
