@@ -14,5 +14,4 @@ $stmt = $pdo->prepare("INSERT INTO comments (user_id, comment) VALUES (?, ?)");
 $stmt->execute([$userId, $comment]);
 
 header("Location: ../public/comments.php");
-exit;
-//kkkkkkkkkkk
+exit;// teste dec 
