@@ -53,6 +53,7 @@ function showComments($tree, $parent = null, $level = 0) {
         
         echo '
         <div class="comment-box '.($level > 0 ? "reply-box" : "").'">
+
             <div class="comment-header">
                 <img src="'.$userPhoto.'" class="avatar" alt="'.$c['username'].'">
                 <strong class="username">'.$c['username'].'</strong>
