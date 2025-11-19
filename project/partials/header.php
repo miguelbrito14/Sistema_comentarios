@@ -12,6 +12,28 @@ require_once __DIR__ . "/../config/config.php";
         /* Estilo para comentários recursivos */
         .comment-reply { margin-left: 2rem; border-left: 2px solid #ddd; padding-left: 1rem; }
     </style>
+    <style>
+.reply-box {
+    margin-left: 25px;
+    padding: 8px 12px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    border-left: 3px solid #007bff;
+}
+
+.reply-form {
+    margin-left: 25px;
+}
+
+.reply-box .reply-box {
+    margin-left: 25px; /* recuo para respostas de respostas */
+}
+
+.d-none {
+    display: none;
+}
+</style>
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

@@ -7,40 +7,54 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-// Função recursiva para mostrar comentários e respostas
-function displayComments($comments, $parentId = null, $level = 0) {
+// PEGAR TODOS OS COMENTÁRIOS
+$stmt = $pdo->query("
+    SELECT c.*, u.username 
+    FROM comments c
+    JOIN users u ON u.id = c.user_id
+    ORDER BY c.id ASC
+");
+$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ORGANIZAR EM ÁRVORE
+function organizeComments($comments) {
+    $tree = [];
     foreach ($comments as $c) {
-        if ($c['parent_id'] == $parentId) {
-            $margin = $level * 20;
-            echo '<div class="card mt-3" style="margin-left:' . $margin . 'px">';
-            echo '<div class="card-body">';
-            echo '<h5>' . htmlspecialchars($c['username']) . '</h5>';
-            echo '<p>' . nl2br(htmlspecialchars($c['comment'])) . '</p>';
-            echo '<small class="text-muted">' . $c['created_at'] . '</small>';
+        $tree[$c['parent_id']][] = $c;
+    }
+    return $tree;
+}
 
-            // Formulário de resposta
-            echo '<form action="../actions/comment_action.php" method="POST" class="mt-2">';
-            echo '<input type="hidden" name="parent_id" value="' . $c['id'] . '">';
-            echo '<textarea name="comment" class="form-control" placeholder="Responder..." required></textarea>';
-            echo '<button class="btn btn-sm btn-secondary mt-2">Responder</button>';
-            echo '</form>';
+$tree = organizeComments($comments);
 
-            echo '</div></div>';
+// FUNÇÃO RECURSIVA PARA EXIBIR
+function showComments($tree, $parent = null, $level = 0) {
+    if (!isset($tree[$parent])) return;
 
-            // Chamada recursiva para respostas
-            displayComments($comments, $c['id'], $level + 1);
-        }
+    foreach ($tree[$parent] as $c) {
+
+        echo '<div class="comment '.($level > 0 ? "reply" : "").'">
+                <strong>'.$c['username'].'</strong><br>
+                '.nl2br(htmlspecialchars($c['comment'])).'
+                <div class="text-muted small">'.$c['created_at'].'</div>
+
+                <button class="btn btn-sm btn-link p-0 mt-1" onclick="toggleForm('.$c['id'].')">Responder</button>
+
+                <form id="form-'.$c['id'].'" 
+                      action="../actions/comment_action.php" 
+                      method="POST" 
+                      class="reply-form d-none mt-2">
+                    
+                    <input type="hidden" name="parent_id" value="'.$c['id'].'">
+                    <textarea name="comment" class="form-control" rows="1" placeholder="Escreva uma resposta..." required></textarea>
+                    <button class="btn btn-primary btn-sm mt-1">Enviar</button>
+                </form>
+              </div>';
+
+        showComments($tree, $c['id'], $level + 1);
     }
 }
 
-// Pegar todos os comentários
-$stmt = $pdo->query("
-    SELECT comments.*, users.username
-    FROM comments
-    JOIN users ON users.id = comments.user_id
-    ORDER BY comments.id DESC
-");
-$allComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <h2>Comentários</h2>
@@ -52,8 +66,38 @@ $allComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <hr>
 
-<h3>Todos os Comentários</h3>
+<div class="card p-3">
+    <h4>Todos os comentários</h4>
+    <?php showComments($tree); ?>
+</div>
 
-<?php displayComments($allComments); ?>
+<style>
+    /* Estilo igual Instagram */
+
+    .comment {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .reply {
+        margin-left: 40px;
+        border-left: 2px solid #ddd;
+        padding-left: 10px;
+    }
+
+    .reply-form {
+        margin-left: 40px;
+    }
+
+    .comment:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<script>
+function toggleForm(id){
+    document.getElementById("form-"+id).classList.toggle("d-none");
+}
+</script>
 
 <?php require_once "../partials/footer.php"; ?>
