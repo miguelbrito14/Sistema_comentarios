@@ -32,6 +32,10 @@ require_once __DIR__ . "/../config/config.php";
 .d-none {
     display: none;
 }
+
+.navbar-nav .dropdown-toggle img {
+    border: 2px solid #fff;
+}
 </style>
 
 </head>
@@ -55,7 +59,7 @@ require_once __DIR__ . "/../config/config.php";
                     $BASE_URL . '/../uploads/' . $_SESSION['user']['photo'] : 
                     'https://via.placeholder.com/30x30/007bff/ffffff?text=' . substr($_SESSION['user']['username'], 0, 1);
                 ?>
-                <img src="<?= $userPhoto ?>" style="width:30px; height:30px; border-radius:50%; margin-right:8px;">
+                <img src="<?= $userPhoto ?>" style="width:30px; height:30px; border-radius:50%; margin-right:8px; object-fit: cover;">
                 <?= $_SESSION['user']['username'] ?>
             </a>
             <ul class="dropdown-menu">

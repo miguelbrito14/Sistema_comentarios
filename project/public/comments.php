@@ -44,12 +44,13 @@ function organizeComments($comments) {
 
 $tree = organizeComments($comments);
 
-// FUNÇÃO RECURSIVA — COM FOTOS
+// FUNÇÃO RECURSIVA — COM FOTOS E BOTÃO EXCLUIR
 function showComments($tree, $parent = null, $level = 0) {
     if (!isset($tree[$parent])) return;
 
     foreach ($tree[$parent] as $c) {
         $userPhoto = !empty($c['user_photo']) ? "../uploads/" . $c['user_photo'] : 'https://via.placeholder.com/40x40/007bff/ffffff?text=' . substr($c['username'], 0, 1);
+        $isOwner = isset($_SESSION['user']) && $c['user_id'] == $_SESSION['user']['id'];
         
         echo '
         <div class="comment-box '.($level > 0 ? "reply-box" : "").'">
@@ -57,8 +58,19 @@ function showComments($tree, $parent = null, $level = 0) {
             <div class="comment-header">
                 <img src="'.$userPhoto.'" class="avatar" alt="'.$c['username'].'">
                 <strong class="username">'.$c['username'].'</strong>
-                <span class="time small">'.date('d/m/Y H:i', strtotime($c['created_at'])).'</span>
-            </div>';
+                <span class="time small">'.date('d/m/Y H:i', strtotime($c['created_at'])).'</span>';
+                
+                // Botão excluir apenas para o dono do comentário
+                if ($isOwner) {
+                    echo '<button class="btn-delete" onclick="confirmDelete('.$c['id'].')" title="Excluir comentário">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                          </button>';
+                }
+                
+        echo '</div>';
 
         // Mostrar foto do comentário se existir
         if (!empty($c['foto'])) {
@@ -77,7 +89,9 @@ function showComments($tree, $parent = null, $level = 0) {
         }
 
         echo '
-            <button class="btn-reply" onclick="toggleForm('.$c['id'].')">Responder</button>
+            <div class="comment-actions">
+                <button class="btn-reply" onclick="toggleForm('.$c['id'].')">Responder</button>
+            </div>
 
             <form id="form-'.$c['id'].'" 
                   action="../actions/comment_action.php" 
@@ -136,6 +150,18 @@ function showComments($tree, $parent = null, $level = 0) {
     <div class="modal-content">
         <img id="modalImage">
         <button onclick="closeModal()" class="modal-close">X Fechar</button>
+    </div>
+</div>
+
+<!-- Modal de confirmação para excluir -->
+<div id="deleteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+        <h5>Excluir Comentário</h5>
+        <p>Tem certeza que deseja excluir este comentário?</p>
+        <div class="mt-3">
+            <button id="confirmDelete" class="btn btn-danger">Sim, Excluir</button>
+            <button onclick="closeDeleteModal()" class="btn btn-secondary">Cancelar</button>
+        </div>
     </div>
 </div>
 
@@ -228,6 +254,7 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 8px;
+    position: relative;
 }
 
 .avatar {
@@ -272,7 +299,13 @@ body {
     opacity: 0.95;
 }
 
-/* Botão responder */
+/* Botões de ação */
+.comment-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+}
+
 .btn-reply {
     background: none;
     border: none;
@@ -285,6 +318,21 @@ body {
 
 .btn-reply:hover {
     color: #262626;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.btn-delete:hover {
+    background: #dc3545;
+    color: white;
 }
 
 /* Input de resposta */
@@ -371,6 +419,31 @@ body {
 </style>
 
 <script>
+let commentToDelete = null;
+
+function confirmDelete(commentId) {
+    commentToDelete = commentId;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    commentToDelete = null;
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (commentToDelete) {
+        window.location.href = '../actions/delete_comment_action.php?id=' + commentToDelete;
+    }
+});
+
+// Fechar modal de exclusão clicando fora
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
 function toggleForm(id){
     const form = document.getElementById("form-"+id);
     form.classList.toggle("d-none");
@@ -424,6 +497,7 @@ document.getElementById('imageModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeModal();
+        closeDeleteModal();
     }
 });
 
