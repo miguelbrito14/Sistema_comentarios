@@ -24,13 +24,16 @@ if (isset($_SESSION['flash_success'])) {
     unset($_SESSION['flash_success']);
 }
 
-// PEGAR TODOS OS COMENTÁRIOS
-$stmt = $pdo->query("
-    SELECT c.*, u.username, u.photo as user_photo
+// Buscar comentários com informações de like do usuário atual
+$userId = $_SESSION['user']['id'];
+$stmt = $pdo->prepare("
+    SELECT c.*, u.username, u.photo as user_photo,
+           EXISTS(SELECT 1 FROM comment_likes WHERE comment_id = c.id AND user_id = ?) as user_liked
     FROM comments c
     JOIN users u ON u.id = c.user_id
     ORDER BY c.created_at DESC
 ");
+$stmt->execute([$userId]);
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ORGANIZAR EM ÁRVORE
@@ -44,21 +47,45 @@ function organizeComments($comments) {
 
 $tree = organizeComments($comments);
 
-// FUNÇÃO RECURSIVA — COM FOTOS E BOTÃO EXCLUIR
+// FUNÇÃO RECURSIVA — COM TODAS AS FUNÇÕES
 function showComments($tree, $parent = null, $level = 0) {
     if (!isset($tree[$parent])) return;
 
     foreach ($tree[$parent] as $c) {
         $userPhoto = !empty($c['user_photo']) ? "../uploads/" . $c['user_photo'] : 'https://via.placeholder.com/40x40/007bff/ffffff?text=' . substr($c['username'], 0, 1);
         $isOwner = isset($_SESSION['user']) && $c['user_id'] == $_SESSION['user']['id'];
+        $isEdited = !empty($c['updated_at']) && $c['updated_at'] != $c['created_at'];
         
         echo '
-        <div class="comment-box '.($level > 0 ? "reply-box" : "").'">
+        <div class="comment-box '.($level > 0 ? "reply-box" : "").'" id="comment-'.$c['id'].'">
 
             <div class="comment-header">
                 <img src="'.$userPhoto.'" class="avatar" alt="'.$c['username'].'">
                 <strong class="username">'.$c['username'].'</strong>
-                <span class="time small">'.date('d/m/Y H:i', strtotime($c['created_at'])).'</span>';
+                <span class="time small">'.date('d/m/Y H:i', strtotime($c['created_at']));
+                
+                if ($isEdited) {
+                    echo ' <span class="text-muted">(editado)</span>';
+                }
+                
+                echo '</span>';
+                
+                // Botões de ação
+                echo '<div class="comment-actions-header">';
+                
+                // Botão like
+        
+                $likeClass = $c['user_liked'] ? 'btn-liked' : 'btn-like';
+                $likeIcon = $c['user_liked'] ? 
+                    '<path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>' :
+                    '<path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>';
+
+                echo '<button class="'.$likeClass.'" onclick="toggleLike('.$c['id'].')" title="Curtir">
+                        <span class="like-count">'.($c['likes'] ?: '0').'</span>
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            '.$likeIcon.'
+                        </svg>
+                    </button>';
                 
                 // Botão excluir apenas para o dono do comentário
                 if ($isOwner) {
@@ -68,10 +95,22 @@ function showComments($tree, $parent = null, $level = 0) {
                                 <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                             </svg>
                           </button>';
+                    
+                    // Botão editar
+                    echo '<button class="btn-edit" onclick="enableEdit('.$c['id'].')" title="Editar comentário">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                          </button>';
                 }
+                
+                echo '</div>';
                 
         echo '</div>';
 
+        // Área de conteúdo editável
+        echo '<div class="comment-content" id="content-'.$c['id'].'">';
+        
         // Mostrar foto do comentário se existir
         if (!empty($c['foto'])) {
             echo '
@@ -85,11 +124,30 @@ function showComments($tree, $parent = null, $level = 0) {
 
         // Mostrar texto do comentário se existir
         if (!empty($c['comment'])) {
-            echo '<div class="comment-text">'.nl2br(htmlspecialchars($c['comment'])).'</div>';
+            echo '<div class="comment-text" id="text-'.$c['id'].'">'.nl2br(htmlspecialchars($c['comment'])).'</div>';
+        }
+        
+        echo '</div>';
+
+        // Formulário de edição (hidden)
+        if ($isOwner && !empty($c['comment'])) {
+            echo '
+            <form id="edit-form-'.$c['id'].'" 
+                  action="../actions/edit_comment_action.php" 
+                  method="POST" 
+                  class="edit-form d-none mt-2">
+                
+                <input type="hidden" name="comment_id" value="'.$c['id'].'">
+                <textarea name="comment" class="form-control edit-input" rows="3">'.htmlspecialchars($c['comment']).'</textarea>
+                <div class="edit-actions mt-2">
+                    <button type="submit" class="btn-save">Salvar</button>
+                    <button type="button" class="btn-cancel" onclick="cancelEdit('.$c['id'].')">Cancelar</button>
+                </div>
+            </form>';
         }
 
         echo '
-            <div class="comment-actions">
+            <div class="comment-footer">
                 <button class="btn-reply" onclick="toggleForm('.$c['id'].')">Responder</button>
             </div>
 
@@ -233,6 +291,7 @@ body {
 .comment-box {
     padding: 16px 20px;
     border-bottom: 1px solid #efefef;
+    transition: all 0.3s ease;
 }
 
 .comment-box:last-child {
@@ -283,6 +342,60 @@ body {
     margin-left: auto;
     color: #8e8e8e;
     font-size: 12px;
+    margin-right: 10px;
+}
+
+/* Ações do cabeçalho */
+.comment-actions-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-like, .btn-liked {
+    background: none;
+    border: none;
+    color: #8e8e8e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-liked {
+    color: #ed4956;
+}
+
+.btn-like:hover {
+    color: #ed4956;
+    background: #fafafa;
+}
+
+.like-count {
+    font-weight: 600;
+}
+
+.btn-edit, .btn-delete {
+    background: none;
+    border: none;
+    color: #8e8e8e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    color: #0095f6;
+    background: #f0f8ff;
+}
+
+.btn-delete:hover {
+    color: #dc3545;
+    background: #fef2f2;
 }
 
 /* Foto do comentário */
@@ -299,10 +412,8 @@ body {
     opacity: 0.95;
 }
 
-/* Botões de ação */
-.comment-actions {
-    display: flex;
-    gap: 15px;
+/* Rodapé do comentário */
+.comment-footer {
     margin-top: 8px;
 }
 
@@ -320,27 +431,12 @@ body {
     color: #262626;
 }
 
-.btn-delete {
-    background: none;
-    border: none;
-    color: #dc3545;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: auto;
-}
-
-.btn-delete:hover {
-    background: #dc3545;
-    color: white;
-}
-
-/* Input de resposta */
-.reply-form {
+/* Formulários */
+.reply-form, .edit-form {
     margin-top: 12px;
 }
 
-.comment-input {
+.comment-input, .edit-input {
     border-radius: 8px;
     resize: none;
     border: 1px solid #dbdbdb;
@@ -348,7 +444,11 @@ body {
     font-size: 14px;
 }
 
-.btn-send {
+.edit-input {
+    border-color: #0095f6;
+}
+
+.btn-send, .btn-save {
     padding: 6px 16px;
     background: #0095f6;
     border: none;
@@ -356,10 +456,30 @@ body {
     color: white;
     font-weight: 600;
     font-size: 14px;
+    margin-right: 8px;
 }
 
-.btn-send:hover {
+.btn-send:hover, .btn-save:hover {
     background: #0081d6;
+}
+
+.btn-cancel {
+    padding: 6px 16px;
+    background: #6c757d;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .preview-container {
@@ -416,11 +536,119 @@ body {
     border: none;
     font-size: 14px;
 }
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.comment-box {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .reply-box { margin-left: 15px; }
+    .comment-actions-header { gap: 4px; }
+    .comment-header { flex-wrap: wrap; }
+    .time { margin-left: 0; width: 100%; }
+}
 </style>
 
 <script>
 let commentToDelete = null;
 
+// Sistema de Likes CORRIGIDO
+async function toggleLike(commentId) {
+    const likeBtn = document.querySelector(`#comment-${commentId} .btn-like, #comment-${commentId} .btn-liked`);
+    const likeCount = document.querySelector(`#comment-${commentId} .like-count`);
+    
+    if (!likeBtn || !likeCount) {
+        console.error('Elementos do like não encontrados');
+        return;
+    }
+    
+    const isLiked = likeBtn.classList.contains('btn-liked');
+    
+    try {
+        const response = await fetch('../actions/like_action.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                comment_id: commentId
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Atualizar contador
+            likeCount.textContent = result.likes;
+            
+            // Atualizar aparência do botão
+            if (result.action === 'like') {
+                likeBtn.classList.remove('btn-like');
+                likeBtn.classList.add('btn-liked');
+                likeBtn.innerHTML = `<span class="like-count">${result.likes}</span>
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                    </svg>`;
+            } else {
+                likeBtn.classList.remove('btn-liked');
+                likeBtn.classList.add('btn-like');
+                likeBtn.innerHTML = `<span class="like-count">${result.likes}</span>
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                    </svg>`;
+            }
+        } else {
+            console.error('Erro no like:', result.message);
+            alert('Erro ao curtir: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Erro na requisição:', error);
+        alert('Erro de conexão. Tente novamente.');
+    }
+}
+
+// Sistema de Edição CORRIGIDO
+function enableEdit(commentId) {
+    const contentDiv = document.getElementById(`content-${commentId}`);
+    const editForm = document.getElementById(`edit-form-${commentId}`);
+    const replyForm = document.getElementById(`form-${commentId}`);
+    
+    if (contentDiv) contentDiv.style.display = 'none';
+    if (editForm) editForm.classList.remove('d-none');
+    if (replyForm) replyForm.classList.add('d-none'); // Esconder formulário de resposta
+}
+
+function cancelEdit(commentId) {
+    const contentDiv = document.getElementById(`content-${commentId}`);
+    const editForm = document.getElementById(`edit-form-${commentId}`);
+    
+    if (contentDiv) contentDiv.style.display = 'block';
+    if (editForm) editForm.classList.add('d-none');
+}
+
+// Prevenir conflito entre edição e resposta
+function toggleForm(id){
+    const form = document.getElementById("form-"+id);
+    const editForm = document.getElementById("edit-form-"+id);
+    
+    if (form) {
+        form.classList.toggle("d-none");
+    }
+    
+    // Cancelar edição se estiver ativa
+    if (editForm && !editForm.classList.contains('d-none')) {
+        cancelEdit(id);
+    }
+}
+
+// Sistema de Exclusão
 function confirmDelete(commentId) {
     commentToDelete = commentId;
     document.getElementById('deleteModal').style.display = 'flex';
@@ -437,31 +665,20 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
     }
 });
 
-// Fechar modal de exclusão clicando fora
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDeleteModal();
-    }
-});
-
-function toggleForm(id){
-    const form = document.getElementById("form-"+id);
-    form.classList.toggle("d-none");
-}
-
+// Funções de imagem
 function previewImage(input, formId) {
     const file = input.files[0];
     const previewContainer = document.getElementById('preview-' + formId);
     const previewImage = previewContainer.querySelector('.preview-image');
     
-    if (file) {
+    if (file && previewContainer && previewImage) {
         const reader = new FileReader();
         reader.onload = function(e) {
             previewImage.src = e.target.result;
             previewContainer.style.display = 'flex';
         }
         reader.readAsDataURL(file);
-    } else {
+    } else if (previewContainer) {
         previewContainer.style.display = 'none';
     }
 }
@@ -470,40 +687,72 @@ function removeImage(formId) {
     const previewContainer = document.getElementById('preview-' + formId);
     const fileInput = document.querySelector('input[onchange*="'+formId+'"]');
     
-    previewContainer.style.display = 'none';
+    if (previewContainer) {
+        previewContainer.style.display = 'none';
+    }
     if (fileInput) {
         fileInput.value = '';
     }
 }
 
 function openModal(src) {
-    document.getElementById('modalImage').src = src;
-    document.getElementById('imageModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    const modalImage = document.getElementById('modalImage');
+    const imageModal = document.getElementById('imageModal');
+    
+    if (modalImage && imageModal) {
+        modalImage.src = src;
+        imageModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeModal() {
-    document.getElementById('imageModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
+    const imageModal = document.getElementById('imageModal');
+    if (imageModal) {
+        imageModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 }
 
-// Fechar modal clicando fora ou com ESC
-document.getElementById('imageModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeModal();
+// Event Listeners CORRIGIDOS
+document.addEventListener('DOMContentLoaded', function() {
+    // Fechar modal clicando fora ou com ESC
+    const imageModal = document.getElementById('imageModal');
+    const deleteModal = document.getElementById('deleteModal');
+    
+    if (imageModal) {
+        imageModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
     }
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeModal();
-        closeDeleteModal();
+    
+    if (deleteModal) {
+        deleteModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
     }
-});
-
-// Preview para o formulário principal
-document.getElementById('fotoPrincipal').addEventListener('change', function(e) {
-    previewImage(this, 'principal');
+    
+    // Preview para o formulário principal
+    const fotoPrincipal = document.getElementById('fotoPrincipal');
+    if (fotoPrincipal) {
+        fotoPrincipal.addEventListener('change', function(e) {
+            previewImage(this, 'principal');
+        });
+    }
+    
+    // Tecla ESC para fechar modais
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            closeDeleteModal();
+        }
+    });
+    
+    console.log('Sistema de comentários carregado!');
 });
 </script>
 

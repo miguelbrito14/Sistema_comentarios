@@ -16,7 +16,6 @@ if (!isset($_GET['id'])) {
 $commentId = $_GET['id'];
 $userId = $_SESSION['user']['id'];
 
-// Verificar se o comentário pertence ao usuário
 try {
     $stmt = $pdo->prepare("SELECT * FROM comments WHERE id = ? AND user_id = ?");
     $stmt->execute([$commentId, $userId]);
@@ -35,6 +34,10 @@ try {
             unlink($fotoPath);
         }
     }
+    
+    // Deletar os likes do comentário
+    $stmt = $pdo->prepare("DELETE FROM comment_likes WHERE comment_id = ?");
+    $stmt->execute([$commentId]);
     
     // Deletar o comentário
     $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ?");

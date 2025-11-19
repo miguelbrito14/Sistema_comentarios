@@ -18,3 +18,4 @@ if (!$user || !password_verify($pass, $user['password'])) {
 $_SESSION['user'] = $user;
 header("Location: ../public/comments.php");
 exit;
+?>
