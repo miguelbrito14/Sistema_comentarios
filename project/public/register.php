@@ -68,7 +68,8 @@
         </div>
     <?php endif; ?>
 
-    <form action="../actions/register_action.php" method="POST">
+    <!-- AQUI ADICIONEI O enctype PARA UPLOAD -->
+    <form action="../actions/register_action.php" method="POST" enctype="multipart/form-data">
 
         <label>Usuário:</label>
         <input type="text" name="username" class="form-control" required>
@@ -78,6 +79,10 @@
 
         <label class="mt-3">Senha:</label>
         <input type="password" name="password" class="form-control" required>
+
+        <!-- CAMPO DE FOTO ADICIONADO — NÃO QUEBROU O LAYOUT -->
+        <label class="mt-3">Foto de Perfil:</label>
+        <input type="file" name="photo" class="form-control">
 
         <button class="btn btn-success mt-4">Registrar</button>
     </form>

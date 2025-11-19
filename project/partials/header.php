@@ -48,8 +48,22 @@ require_once __DIR__ . "/../config/config.php";
           <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/login.php">Login</a></li>
           <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/register.php">Registrar</a></li>
         <?php else: ?>
-          <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/comments.php">Comentários</a></li>
-          <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/logout.php">Sair</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <?php 
+                $userPhoto = !empty($_SESSION['user']['photo']) ? 
+                    $BASE_URL . '/../uploads/' . $_SESSION['user']['photo'] : 
+                    'https://via.placeholder.com/30x30/007bff/ffffff?text=' . substr($_SESSION['user']['username'], 0, 1);
+                ?>
+                <img src="<?= $userPhoto ?>" style="width:30px; height:30px; border-radius:50%; margin-right:8px;">
+                <?= $_SESSION['user']['username'] ?>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="<?= $BASE_URL ?>/comments.php">Comentários</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="<?= $BASE_URL ?>/logout.php">Sair</a></li>
+            </ul>
+          </li>
         <?php endif; ?>
 
       </ul>
