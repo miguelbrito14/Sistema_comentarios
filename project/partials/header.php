@@ -38,34 +38,40 @@ require_once __DIR__ . "/../config/config.php";
         }
 
         /* Dark Mode */
+        /* Dark Mode estilo Instagram */
         .dark-mode {
-            background: #1a1a1a !important;
-            color: #ffffff;
+            background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.12), transparent 10%),
+                        radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.08), transparent 10%),
+                        #0f0f10 !important;
+            color: #e6e6e6;
             min-height: 100vh;
         }
 
         .dark-mode body {
-             background: #1a1a1a !important;
+             background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.08), transparent 10%),
+                         radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.06), transparent 10%),
+                         #0f0f10 !important;
         }
         
         .dark-mode .navbar-dark {
-            background: #2d3748 !important;
+            background: linear-gradient(90deg, #111827 0%, #4c1d95 40%, #7c3aed 100%) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
         
         .dark-mode .card {
-            background: #2d3748;
-            color: #ffffff;
-            border-color: #4a5568;
+            background: linear-gradient(180deg,#111316,#18202a);
+            color: #e6e6e6;
+            border-color: rgba(255,255,255,0.04);
         }
         
         .dark-mode .form-control {
-            background: #4a5568;
-            border-color: #718096;
-            color: #ffffff;
+            background: #1f2937;
+            border-color: #374151;
+            color: #e6e6e6;
         }
         
         .dark-mode .form-control::placeholder {
-            color: #a0aec0;
+            color: #9ca3af;
         }
     </style>
 </head>

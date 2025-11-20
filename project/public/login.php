@@ -67,6 +67,30 @@
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
+.alert {
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: .75rem 1rem;
+}
+.alert-danger {
+    background: #fff5f5;
+    border-color: #fed7d7;
+    color: #742a2a;
+}
+.alert-success {
+    background: #f0fff4;
+    border-color: #c6f6d5;
+    color: #22543d;
+}
+.alert .btn-close {
+    border: none;
+    background: transparent;
+}
+.alert:focus, .btn-close:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .login-links {
     text-align: center;
     margin-top: 25px;
@@ -121,30 +145,33 @@
 
 /* Dark mode CORRIGIDO */
 .dark-mode .login-wrapper {
-    background: #2d3748;
-    border-color: #4a5568;
+    background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.06), transparent 10%),
+                        radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.04), transparent 10%),
+                        linear-gradient(180deg,#0b0b0d,#0f1113);
+    border-color: rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(2,6,23,0.6);
 }
 
 .dark-mode .login-wrapper label {
-    color: #e2e8f0;
+    color: #e6e6e6;
 }
 
 .dark-mode .login-wrapper input {
-    background: #4a5568;
-    border-color: #718096;
-    color: #ffffff;
+    background: #111318;
+    border-color: #22262b;
+    color: #e6e6e6;
 }
 
 .dark-mode .login-wrapper input::placeholder {
-    color: #a0aec0;
+    color: #9ca3af;
 }
 
 .dark-mode .feature-list {
-    background: #4a5568;
+    background: linear-gradient(180deg,#0b0b0d,#14151a);
 }
 
 .dark-mode .feature-list h6 {
-    color: #e2e8f0;
+    color: #e6e6e6;
 }
 
 .dark-mode .feature-list li {
@@ -225,3 +252,12 @@
 </div>
 
 <?php require_once "../partials/footer.php"; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    if (document.querySelector('.alert')) {
+        const els = document.querySelectorAll('.login-wrapper input, .login-wrapper button');
+        els.forEach(e => e.blur());
+    }
+});
+</script>

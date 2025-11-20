@@ -175,11 +175,11 @@ function showComments($tree, $parent = null, $level = 0) {
         </div>';
 
         showComments($tree, $c['id'], $level + 1);
-    }
-}
-?>
+            }
+        }
+        ?>
 
-<h2 class="title-main">Comentários</h2>
+        <h2 class="title-main">Comentários</h2>
 
 <div class="new-comment-box">
     <form action="../actions/comment_action.php" method="POST" enctype="multipart/form-data">
@@ -213,7 +213,7 @@ function showComments($tree, $parent = null, $level = 0) {
 
 <!-- Modal de confirmação para excluir -->
 <div id="deleteModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+    <div class="modal-content modal-box">
         <h5>Excluir Comentário</h5>
         <p>Tem certeza que deseja excluir este comentário?</p>
         <div class="mt-3">
@@ -248,6 +248,33 @@ body {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     border: 1px solid #dbdbdb;
     margin-bottom: 20px;
+}
+
+/* Dark mode: caixa de publicar (novo comentário) */
+.dark-mode .new-comment-box {
+    background: linear-gradient(180deg,#0b0b0d,#0f1113);
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(2,6,23,0.6);
+}
+
+.dark-mode .main-input {
+    background: #111318;
+    border-color: #22262b;
+    color: #e6e6e6;
+}
+
+.dark-mode .title-main {
+    color: #ffffff;
+}
+
+.dark-mode .small.text-muted,
+.dark-mode label.small.text-muted {
+    color: #e6e6e6 !important;
+}
+
+.dark-mode .preview-container {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.03);
 }
 
 .main-input {
@@ -287,11 +314,23 @@ body {
     border: 1px solid #dbdbdb;
 }
 
+/* Dark mode: caixas de comentário em tom escuro (estilo instagram) */
+.dark-mode .comments-container {
+    background: linear-gradient(180deg,#0b0b0d,#0f1113);
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(2,6,23,0.6);
+}
+
 /* Caixa do comentário */
 .comment-box {
     padding: 16px 20px;
     border-bottom: 1px solid #efefef;
     transition: all 0.3s ease;
+}
+
+.dark-mode .comment-box {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
 .comment-box:last-child {
@@ -305,6 +344,11 @@ body {
     background: #fafafa;
     margin-top: 8px;
     border-radius: 0 8px 8px 0;
+}
+
+.dark-mode .reply-box {
+    border-left-color: rgba(255,255,255,0.03);
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
 }
 
 /* Cabeçalho */
@@ -324,6 +368,10 @@ body {
     border: 1px solid #dbdbdb;
 }
 
+.dark-mode .avatar {
+    border-color: rgba(255,255,255,0.04);
+}
+
 /* Texto */
 .username {
     font-weight: 600;
@@ -331,11 +379,19 @@ body {
     font-size: 14px;
 }
 
+.dark-mode .username {
+    color: #e6e6e6;
+}
+
 .comment-text {
     margin: 8px 0;
     font-size: 14px;
     line-height: 1.4;
     color: #262626;
+}
+
+.dark-mode .comment-text {
+    color: #d1d5db;
 }
 
 .time {
@@ -367,7 +423,20 @@ body {
 }
 
 .btn-liked {
-    color: #ed4956;
+    color: #ff2d55; /* vermelho forte ao curtir */
+    font-weight: 700;
+}
+
+.btn-like:hover {
+    color: #ff6b81;
+}
+
+/* Garantir contraste do like no dark mode */
+.dark-mode .btn-like, .dark-mode .btn-liked {
+    color: #9ca3af;
+}
+.dark-mode .btn-liked {
+    color: #ff6b6b;
 }
 
 .btn-like:hover {
@@ -531,6 +600,46 @@ body {
     font-weight: 600;
 }
 
+/* Caixa do modal (confirm delete) - padrão claro */
+.modal-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    color: #111827;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Dark mode: modal escuro e botões com contraste */
+.dark-mode .modal-box {
+    background: linear-gradient(180deg,#0b0b0d,#14161a);
+    color: #e6e6e6;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(2,6,23,0.6);
+}
+
+.dark-mode .modal-close {
+    background: #ff6b6b;
+}
+
+/* Botões no modal em dark mode */
+.dark-mode .btn-danger {
+    background: #9b2c2c;
+    border-color: #7f1d1d;
+    color: #fff;
+}
+.dark-mode .btn-secondary {
+    background: transparent;
+    color: #d1d5db;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Garantir que texto não fique branco sobre fundo branco */
+.modal-box h5, .modal-box p {
+    margin: 0 0 8px 0;
+}
+
 .alert {
     border-radius: 8px;
     border: none;
@@ -583,7 +692,7 @@ async function toggleLike(commentId) {
         });
         
         const result = await response.json();
-        
+
         if (result.success) {
             // Atualizar contador
             likeCount.textContent = result.likes;

@@ -92,18 +92,31 @@
 
 /* Dark mode */
 .dark-mode .register-wrapper {
-    background: #2d3748;
-    border-color: #4a5568;
+    background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.06), transparent 10%),
+                        radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.04), transparent 10%),
+                        linear-gradient(180deg,#0b0b0d,#0f1113);
+    border-color: rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(2,6,23,0.6);
 }
 
 .dark-mode .register-wrapper label {
-    color: #e2e8f0;
+    color: #e6e6e6;
 }
 
 .dark-mode .register-wrapper input {
-    background: #4a5568;
-    border-color: #718096;
-    color: #ffffff;
+    background: #111318;
+    border-color: #22262b;
+    color: #e6e6e6;
+}
+
+/* Alerts & preview in dark mode */
+.dark-mode .alert {
+    border: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    color: #e6e6e6;
+}
+.dark-mode .photo-preview {
+    border-color: rgba(255,255,255,0.06);
 }
 </style>
 
