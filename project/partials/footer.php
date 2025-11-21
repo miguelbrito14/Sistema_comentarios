@@ -31,7 +31,7 @@ function searchComments() {
 let currentPage = 1;
 function loadMoreComments() {
     // Implementar AJAX para carregar mais comentários
-    console.log('Carregando mais comentários...');
+    // implementação futura: carregar mais comentários via AJAX
 }
 
 // Inicializar tooltips do Bootstrap

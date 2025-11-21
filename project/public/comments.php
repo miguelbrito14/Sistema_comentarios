@@ -165,8 +165,8 @@ function showComments($tree, $parent = null, $level = 0) {
                     <input type="file" name="foto" class="form-control form-control-sm" accept="image/*" onchange="previewImage(this, '.$c['id'].')">
                 </div>
                 
-                <div class="preview-container mt-2" id="preview-'.$c['id'].'" style="display:none;">
-                    <img class="preview-image" style="max-width: 150px; border-radius: 5px;">
+                <div class="preview-container mt-2 d-none" id="preview-'.$c['id'].'">
+                    <img class="preview-image">
                     <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeImage('.$c['id'].')">Remover</button>
                 </div>
                 
@@ -190,8 +190,8 @@ function showComments($tree, $parent = null, $level = 0) {
             <input type="file" name="foto" id="fotoPrincipal" class="form-control" accept="image/*" onchange="previewImage(this, 'principal')">
         </div>
         
-        <div class="preview-container mt-2" id="preview-principal" style="display:none;">
-            <img class="preview-image" style="max-width: 200px; border-radius: 5px;">
+        <div class="preview-container mt-2 d-none" id="preview-principal">
+            <img class="preview-image">
             <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeImage('principal')">Remover</button>
         </div>
         
@@ -401,6 +401,16 @@ body {
     margin-right: 10px;
 }
 
+/* Corrigir cor da hora e rótulos pequenos no dark mode */
+.dark-mode .time {
+    color: #cbd5e0; /* tom claro para legibilidade */
+}
+
+/* Garantir que o texto '(editado)' (text-muted) fique legível no dark mode */
+.dark-mode .text-muted {
+    color: #9ca3af !important;
+}
+
 /* Ações do cabeçalho */
 .comment-actions-header {
     display: flex;
@@ -562,43 +572,7 @@ body {
 }
 
 /* Modal */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-}
-
-.modal-content img {
-    max-width: 100%;
-    max-height: 90vh;
-    border-radius: 8px;
-}
-
-.modal-close {
-    position: absolute;
-    top: -45px;
-    right: 0;
-    background: #ff4444;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-}
+/* Modal: regras base movidas para assets/app.css (limpeza) */
 
 /* Caixa do modal (confirm delete) - padrão claro */
 .modal-box {
@@ -646,15 +620,7 @@ body {
     font-size: 14px;
 }
 
-/* Animações */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.comment-box {
-    animation: fadeIn 0.3s ease;
-}
+/* Animações centralizadas em assets/app.css */
 
 /* Responsivo */
 @media (max-width: 768px) {
@@ -861,7 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    console.log('Sistema de comentários carregado!');
+    // sistema carregado
 });
 </script>
 

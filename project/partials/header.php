@@ -9,6 +9,7 @@ require_once __DIR__ . "/../config/config.php";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Comentários</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>/assets/app.css" rel="stylesheet">
     <style>
         /* Estilo para comentários recursivos */
         .comment-reply { margin-left: 2rem; border-left: 2px solid #ddd; padding-left: 1rem; }
@@ -95,7 +96,7 @@ require_once __DIR__ . "/../config/config.php";
                     $BASE_URL . '/../uploads/' . $_SESSION['user']['photo'] : 
                     'https://via.placeholder.com/30x30/007bff/ffffff?text=' . substr($_SESSION['user']['username'], 0, 1);
                 ?>
-                <img src="<?= $userPhoto ?>" style="width:30px; height:30px; border-radius:50%; margin-right:8px; object-fit: cover;">
+                <img src="<?= $userPhoto ?>" class="nav-avatar">
                 <?= $_SESSION['user']['username'] ?>
             </a>
             <ul class="dropdown-menu">

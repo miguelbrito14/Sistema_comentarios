@@ -14,10 +14,7 @@
     z-index: 1;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* keyframes moved to shared CSS (assets/app.css) */
 
 .login-title {
     font-size: 2rem;

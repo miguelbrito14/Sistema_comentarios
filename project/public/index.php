@@ -168,10 +168,7 @@ $recentComments = $pdo->query("
     padding: 20px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* keyframes centralizados em assets/app.css */
 
 /* Dark mode support */
 .dark-mode .home-box {
