@@ -1,7 +1,5 @@
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 // Funções globais
 function toggleForm(id) {
@@ -13,14 +11,17 @@ function toggleForm(id) {
 
 // Busca em tempo real
 function searchComments() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const el = document.getElementById('searchInput');
+    const searchTerm = el ? el.value.toLowerCase() : '';
     const comments = document.querySelectorAll('.comment-box');
     
     comments.forEach(comment => {
         const text = comment.textContent.toLowerCase();
-        if (text.includes(searchTerm)) {
+        if (searchTerm && text.includes(searchTerm)) {
             comment.style.display = 'block';
             comment.style.animation = 'fadeIn 0.3s ease';
+        } else if (!searchTerm) {
+            comment.style.display = '';
         } else {
             comment.style.display = 'none';
         }
@@ -30,22 +31,27 @@ function searchComments() {
 // Carregar mais comentários (para paginação futura)
 let currentPage = 1;
 function loadMoreComments() {
-    // Implementar AJAX para carregar mais comentários
-    // implementação futura: carregar mais comentários via AJAX
+    // Implementar AJAX para carregar mais comentários (opcional)
 }
 
-// Inicializar tooltips do Bootstrap
-document.addEventListener('DOMContentLoaded', function() {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+// Substitui comportamento do Bootstrap para elementos com data-bs-dismiss
+document.addEventListener('click', function(e){
+    const el = e.target.closest('[data-bs-dismiss]');
+    if (!el) return;
+    const targetSel = el.getAttribute('data-bs-dismiss');
+    if (targetSel === 'alert') {
+        const parentAlert = el.closest('.alert');
+        if (parentAlert) parentAlert.remove();
+    } else {
+        const parent = el.closest('.' + (targetSel || ''));
+        if (parent) parent.remove();
+    }
 });
 
-// Sistema de notificações
+// Sistema de notificações (simples)
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.className = `alert alert-${type} alert-dismissible position-fixed`;
     notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
     notification.innerHTML = `
         ${message}
@@ -53,11 +59,8 @@ function showNotification(message, type = 'info') {
     `;
     document.body.appendChild(notification);
     
-    // Auto-remove após 5 segundos
     setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
+        if (notification.parentNode) notification.parentNode.removeChild(notification);
     }, 5000);
 }
 

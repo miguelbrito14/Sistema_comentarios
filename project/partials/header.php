@@ -8,73 +8,7 @@ require_once __DIR__ . "/../config/config.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Comentários</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $BASE_URL ?>/assets/app.css" rel="stylesheet">
-    <style>
-        /* Estilo para comentários recursivos */
-        .comment-reply { margin-left: 2rem; border-left: 2px solid #ddd; padding-left: 1rem; }
-        
-        .reply-box {
-            margin-left: 25px;
-            padding: 8px 12px;
-            background: #f7f7f7;
-            border-radius: 8px;
-            border-left: 3px solid #007bff;
-        }
-
-        .reply-form {
-            margin-left: 25px;
-        }
-
-        .reply-box .reply-box {
-            margin-left: 25px;
-        }
-
-        .d-none {
-            display: none;
-        }
-
-        .navbar-nav .dropdown-toggle img {
-            border: 2px solid #fff;
-        }
-
-        /* Dark Mode */
-        /* Dark Mode estilo Instagram */
-        .dark-mode {
-            background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.12), transparent 10%),
-                        radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.08), transparent 10%),
-                        #0f0f10 !important;
-            color: #e6e6e6;
-            min-height: 100vh;
-        }
-
-        .dark-mode body {
-             background: radial-gradient(1200px 400px at 10% 10%, rgba(124,58,237,0.08), transparent 10%),
-                         radial-gradient(1000px 300px at 90% 90%, rgba(236,72,153,0.06), transparent 10%),
-                         #0f0f10 !important;
-        }
-        
-        .dark-mode .navbar-dark {
-            background: linear-gradient(90deg, #111827 0%, #4c1d95 40%, #7c3aed 100%) !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-        }
-        
-        .dark-mode .card {
-            background: linear-gradient(180deg,#111316,#18202a);
-            color: #e6e6e6;
-            border-color: rgba(255,255,255,0.04);
-        }
-        
-        .dark-mode .form-control {
-            background: #1f2937;
-            border-color: #374151;
-            color: #e6e6e6;
-        }
-        
-        .dark-mode .form-control::placeholder {
-            color: #9ca3af;
-        }
-    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
