@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.1.1deb5ubuntu1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Tempo de geração: 19/11/2025 às 00:00
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.2.12
+-- Host: localhost:3306
+-- Tempo de geração: 02/12/2025 às 08:42
+-- Versão do servidor: 8.0.44-0ubuntu0.22.04.1
+-- Versão do PHP: 8.1.2-1ubuntu2.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,25 +28,28 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `comments` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `parent_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `parent_id` int DEFAULT NULL,
   `comment` text NOT NULL,
-  `created_at` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `likes` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
 
 --
--- Despejando dados para a tabela `comments`
+-- Estrutura para tabela `comment_likes`
 --
 
-INSERT INTO `comments` (`id`, `user_id`, `parent_id`, `comment`, `created_at`) VALUES
-(1, 1, NULL, 'O site prestou hehehehehe', '2025-11-18 12:40:10'),
-(2, 1, NULL, 'Ai papai', '2025-11-18 12:45:41'),
-(3, 2, NULL, 'Aqui é o lorin', '2025-11-18 12:46:58'),
-(4, 2, NULL, 'Comentário teste', '2025-11-18 12:48:04'),
-(5, 1, 4, 'eita kkkkk', '2025-11-18 22:54:37'),
-(6, 1, 4, 'vamo', '2025-11-18 22:54:49'),
-(7, 1, 3, 'kkkkkkkkk', '2025-11-18 22:57:06');
+CREATE TABLE `comment_likes` (
+  `id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `comment_id` int DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -55,20 +58,14 @@ INSERT INTO `comments` (`id`, `user_id`, `parent_id`, `comment`, `created_at`) V
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Despejando dados para a tabela `users`
---
-
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
-(1, 'Miguel Brito', 'Miguel689wg@gmail.com', '$2y$10$QCdtqQTStgkYGpGJrHhhNu0uBenAKzra4Y.sFefPYgnZCDK.RW9yO', '2025-11-18 12:39:03'),
-(2, 'Emerson Silva', 'Emersonsilva@gmail.com', '$2y$10$S6jewriaxdVNmM0NncPdOe10CAO1od3QzyTurGPIB/riMp/xDswkm', '2025-11-18 12:46:27');
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `profile_pic` varchar(255) DEFAULT NULL,
+  `photo` varchar(255) DEFAULT 'default.png'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Índices para tabelas despejadas
@@ -81,6 +78,14 @@ ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `fk_parent_comment` (`parent_id`);
+
+--
+-- Índices de tabela `comment_likes`
+--
+ALTER TABLE `comment_likes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_like` (`user_id`,`comment_id`),
+  ADD KEY `comment_id` (`comment_id`);
 
 --
 -- Índices de tabela `users`
@@ -96,13 +101,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `comment_likes`
+--
+ALTER TABLE `comment_likes`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Restrições para tabelas despejadas
@@ -114,6 +125,13 @@ ALTER TABLE `users`
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `fk_parent_comment` FOREIGN KEY (`parent_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `comment_likes`
+--
+ALTER TABLE `comment_likes`
+  ADD CONSTRAINT `comment_likes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comment_likes_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

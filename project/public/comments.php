@@ -52,7 +52,7 @@ function showComments($tree, $parent = null, $level = 0) {
     if (!isset($tree[$parent])) return;
 
     foreach ($tree[$parent] as $c) {
-        $userPhoto = !empty($c['user_photo']) ? "../uploads/" . $c['user_photo'] : 'https://via.placeholder.com/40x40/007bff/ffffff?text=' . substr($c['username'], 0, 1);
+        $userPhoto = !empty($c['user_photo']) ? "../uploads/" . $c['user_photo'] : '../uploads/fotoPerfil.jpeg';
         $isOwner = isset($_SESSION['user']) && $c['user_id'] == $_SESSION['user']['id'];
         $isEdited = !empty($c['updated_at']) && $c['updated_at'] != $c['created_at'];
         

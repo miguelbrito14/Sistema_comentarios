@@ -261,7 +261,7 @@ $recentComments = $pdo->query("
                     <?php 
                     $userPhoto = !empty($comment['photo']) ? 
                         "../uploads/" . $comment['photo'] : 
-                        'https://via.placeholder.com/30x30/007bff/ffffff?text=' . substr($comment['username'], 0, 1);
+                        '../uploads/fotoPerfil.jpeg';
                     ?>
                     <img src="<?= $userPhoto ?>" class="avatar-preview" alt="<?= $comment['username'] ?>">
                     <span class="username-preview"><?= $comment['username'] ?></span>

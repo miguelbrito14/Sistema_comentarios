@@ -5,6 +5,8 @@ require_once "../config/database.php";
 $username = trim($_POST['username']);
 $email = trim($_POST['email']);
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+// Nome de arquivo padrão caso usuário não envie foto
+$defaultPhoto = 'fotoPerfil.jpeg';
 $photoName = null;
 
 // Processar upload da foto de perfil se existir
@@ -50,6 +52,11 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
 }
 
 // Inserir no banco
+// Se não enviou foto, atribuir a foto padrão
+if (empty($photoName)) {
+    $photoName = $defaultPhoto;
+}
+
 $stmt = $pdo->prepare("INSERT INTO users (username, email, password, photo) VALUES (?, ?, ?, ?)");
 
 try {

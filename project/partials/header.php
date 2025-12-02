@@ -83,7 +83,7 @@ require_once __DIR__ . "/../config/config.php";
     
     <div>
       <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/index.php">Início</a></li>
 
         <?php if (!isset($_SESSION['user'])): ?>
           <li class="nav-item"><a class="nav-link" href="<?= $BASE_URL ?>/login.php">Login</a></li>
@@ -94,7 +94,7 @@ require_once __DIR__ . "/../config/config.php";
                 <?php 
                 $userPhoto = !empty($_SESSION['user']['photo']) ? 
                     $BASE_URL . '/../uploads/' . $_SESSION['user']['photo'] : 
-                    'https://via.placeholder.com/30x30/007bff/ffffff?text=' . substr($_SESSION['user']['username'], 0, 1);
+                    $BASE_URL . '/../uploads/fotoPerfil.jpeg';
                 ?>
                 <img src="<?= $userPhoto ?>" class="nav-avatar">
                 <?= $_SESSION['user']['username'] ?>
