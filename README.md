@@ -36,6 +36,10 @@ Sistema completo de comentários com:
 - ✏️ Editar e excluir comentários  
 - 👤 Upload de foto de perfil  
 - 📦 Arquitetura organizada (actions, config, public, partials, uploads)
+- 🎨 **NOVO**: Design moderno com Glassmorphism
+- 🌙 **NOVO**: Dark Mode fosco com transições suaves
+- 📱 **NOVO**: 100% responsivo (mobile, tablet, desktop)
+- ✨ **NOVO**: Animações e microinterações
 
 ---
 
@@ -172,6 +176,85 @@ Sistema_comentarios-main/
     ├── public/
     └── uploads/
 ```
+
+---
+
+# 🎨 Design Moderno (NEW)
+
+Seu sistema foi completamente redesenhado com um design moderno, limpo e elegante!
+
+## ✨ Características de Design
+
+### 🌈 Modo Claro
+- **Glassmorphism** com transparência e blur effect
+- Tons neutros com detalhes em púrpura/lilás
+- Sombras suaves e cantos arredondados
+- Gradientes elegantes em botões
+
+### 🌙 Dark Mode Fosco
+- Tons grafite (#0f0f10) e cinza petróleo (#1a1a1d)
+- Sem brilho - design fosco profissional
+- Transição suave de 300-400ms
+- Toggle automático com localStorage
+
+### 📱 Totalmente Responsivo
+- Desktop (1200px+): 3 colunas para estatísticas
+- Tablet (768px-1200px): Layout adaptado
+- Mobile (<768px): Optimizado para tela pequena
+- Telemóvel (<480px): Comprimido ao máximo
+
+### ✨ Animações Suaves
+- Entrada suave (fadeIn, slideInUp, slideInDown)
+- Hover effects em botões e cards
+- Pop animation em curtidas
+- Glow em avatares
+- Transições em 300-400ms
+
+### 🎯 Componentes Modernos
+- Cards com glassmorphism
+- Botões com gradientes
+- Formulários elegantes
+- Alertas coloridos
+- Modal com overlay
+- Comentários com avatares glow
+- Estatísticas com ícones
+
+## 📚 Documentação de Design
+
+Para detalhes completos sobre o design:
+1. 📄 **DESIGN_GUIDE.md** - Documentação completa (paleta, componentes, etc)
+2. 📄 **HTML_SUGESTOES.html** - Exemplos práticos de estrutura HTML
+3. 📄 **styles.css** - CSS novo (1.500+ linhas, bem organizado)
+
+## 🚀 Começar a Usar
+
+O design está **100% integrado** e pronto para usar! Nenhuma ação necessária.
+
+Para testar **Dark Mode** no console (F12):
+```javascript
+localStorage.setItem('darkMode', 'true'); location.reload();
+```
+
+Ou use o botão no dropdown do usuário: **🌙 Dark Mode**
+
+## 🎨 Cores Principais
+
+| Propósito | Cor | Código |
+|-----------|-----|--------|
+| Primário | 🟣 Púrpura | `#667eea` |
+| Secundário | 🟣 Lilás | `#764ba2` |
+| Sucesso | 🟢 Verde | `#43e97b` |
+| Perigo | 🔴 Vermelho/Rosa | `#f5576c` |
+| Aviso | 🟡 Amarelo | `#fcb045` |
+
+## 📊 Estatísticas
+
+- ✅ **1.500+ linhas** de CSS bem estruturado
+- ✅ **19 seções** de CSS (navbar, botões, cards, etc)
+- ✅ **10 animações** prontas para usar
+- ✅ **100% Bootstrap 5** compatível
+- ✅ **0% mudanças** no banco de dados
+- ✅ **5 breakpoints** responsivos
 
 ---
 

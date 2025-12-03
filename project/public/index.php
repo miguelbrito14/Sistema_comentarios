@@ -227,16 +227,19 @@ $recentComments = $pdo->query("
     <p class="home-subtitle">Interaja, comente, curta e responda com facilidade. 
     <br>Uma experiência social completa e moderna.</p>
 
-    <div class="home-stats">
+    <div class="stats-container">
         <div class="stat-card">
+            <div class="stat-icon">👥</div>
             <span class="stat-number"><?= $totalUsers ?></span>
             <span class="stat-label">Usuários</span>
         </div>
         <div class="stat-card">
+            <div class="stat-icon">💬</div>
             <span class="stat-number"><?= $totalComments ?></span>
             <span class="stat-label">Comentários</span>
         </div>
         <div class="stat-card">
+            <div class="stat-icon">❤️</div>
             <span class="stat-number"><?= $totalLikes ?: '0' ?></span>
             <span class="stat-label">Curtidas</span>
         </div>
@@ -255,24 +258,34 @@ $recentComments = $pdo->query("
     <?php if ($recentComments): ?>
     <div class="recent-comments">
         <h3 class="recent-title">📢 Comentários Recentes</h3>
-        <?php foreach ($recentComments as $comment): ?>
-            <div class="comment-preview">
-                <div class="comment-header-preview">
-                    <?php 
-                    $userPhoto = !empty($comment['photo']) ? 
-                        "../uploads/" . $comment['photo'] : 
-                        '../uploads/fotoPerfil.jpeg';
-                    ?>
-                    <img src="<?= $userPhoto ?>" class="avatar-preview" alt="<?= $comment['username'] ?>">
-                    <span class="username-preview"><?= $comment['username'] ?></span>
+        <div class="row g-3">
+            <?php foreach ($recentComments as $comment): ?>
+                <div class="col-md-6">
+                    <div class="comment-preview">
+                        <div class="comment-header-preview">
+                            <?php 
+                            $userPhoto = !empty($comment['photo']) ? 
+                                "../uploads/" . $comment['photo'] : 
+                                '../uploads/fotoPerfil.jpeg';
+                            ?>
+                            <img src="<?= $userPhoto ?>" class="avatar-preview" alt="<?= $comment['username'] ?>">
+                            <div>
+                                <strong class="username-preview"><?= $comment['username'] ?></strong>
+                                <div class="text-muted small"><?= date('d/m/Y H:i', strtotime($comment['created_at'])) ?></div>
+                            </div>
+                        </div>
+                        <p class="comment-text-preview">
+                            <?= strlen($comment['comment']) > 100 ? 
+                                substr($comment['comment'], 0, 100) . '...' : 
+                                $comment['comment'] ?>
+                        </p>
+                        <div class="text-muted small">
+                            <span>❤️ <?= $comment['likes'] ?: '0' ?> curtidas</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="comment-text-preview">
-                    <?= strlen($comment['comment']) > 100 ? 
-                        substr($comment['comment'], 0, 100) . '...' : 
-                        $comment['comment'] ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
     <?php endif; ?>
 </div>

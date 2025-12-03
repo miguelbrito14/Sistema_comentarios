@@ -204,36 +204,44 @@
 }
 </style>
 
-<div class="login-wrapper">
-    <h2 class="login-title">🔐 Entrar</h2>
+<div class="auth-container">
+    <div class="auth-box">
+        <h1 class="auth-title">Bem-vindo de volta 👋</h1>
 
-    <?php if (isset($_SESSION['flash'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= $_SESSION['flash']; unset($_SESSION['flash']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['flash'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $_SESSION['flash']; unset($_SESSION['flash']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
 
-    <?php if (isset($_SESSION['flash_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['flash_success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
 
-    <form action="../actions/login_action.php" method="POST">
-        <label>📧 Email:</label>
-        <input type="email" name="email" class="form-control" required placeholder="seu@email.com">
+        <form action="../actions/login_action.php" method="POST">
+            <div class="form-group">
+                <label for="email" class="form-label">📧 Email</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="seu@email.com">
+            </div>
 
-        <label class="mt-3">🔒 Senha:</label>
-        <input type="password" name="password" class="form-control" required placeholder="Sua senha">
+            <div class="form-group">
+                <label for="password" class="form-label">🔐 Senha</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Sua senha">
+            </div>
 
-        <button class="btn btn-primary">🚀 Entrar na Conta</button>
-    </form>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-box-arrow-in-right"></i> Entrar
+            </button>
+        </form>
 
-    <p class="login-links">
-        Não tem conta? <a href="register.php">Crie uma agora!</a>
-    </p>
+        <p class="auth-link">
+            Não tem conta? <a href="register.php">Crie uma agora</a>
+        </p>
+    </div>
 
     <div class="feature-list">
         <h6>✨ Recursos disponíveis:</h6>
