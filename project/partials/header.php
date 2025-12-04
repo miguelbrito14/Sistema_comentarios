@@ -15,7 +15,7 @@ require_once __DIR__ . "/../config/config.php";
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-    <a class="navbar-brand" href="<?= $BASE_URL ?>/index.php">💬 Sistema Comentários</a>
+    <a class="navbar-brand" href="<?= $BASE_URL ?>/index.php">💬 Sistema de Comentários</a>
     
     <div>
       <ul class="navbar-nav">
