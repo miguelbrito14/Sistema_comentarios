@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1deb5ubuntu1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Tempo de geração: 02/12/2025 às 08:42
--- Versão do servidor: 8.0.44-0ubuntu0.22.04.1
--- Versão do PHP: 8.1.2-1ubuntu2.22
+-- Host: localhost
+-- Tempo de geração: 04/12/2025 às 22:37
+-- Versão do servidor: 10.4.32-MariaDB
+-- Versão do PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,15 +28,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `comments` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `parent_id` int DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `comment` text NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT NULL,
   `foto` varchar(255) DEFAULT NULL,
-  `likes` int DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `likes` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -45,11 +45,11 @@ CREATE TABLE `comments` (
 --
 
 CREATE TABLE `comment_likes` (
-  `id` int NOT NULL,
-  `user_id` int DEFAULT NULL,
-  `comment_id` int DEFAULT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -58,14 +58,22 @@ CREATE TABLE `comment_likes` (
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
+  `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `profile_pic` varchar(255) DEFAULT NULL,
-  `photo` varchar(255) DEFAULT 'default.png'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  `photo` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Despejando dados para a tabela `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `photo`, `created_at`) VALUES
+(1, 'miguelbrt7', 'miguel689wg@gmail.com', '$2y$10$lXF95VALtw0xZPiss5IxSedyo.WAz0oS2tRSCllkvRJWsGOo/GLie', NULL, '2025-11-20 02:31:30'),
+(2, 'miguelbrt7', 'miguel689wg@gmail.com', '$2y$10$r5dzWLG2bttiGN01IzKk0ehybaZoJ7liU3b4zJhmazsOAfre5sDWm', NULL, '2025-11-28 21:00:50'),
+(3, 'miguelbrt7', 'miguel689wg@gmail.com', '$2y$10$kj4gVHGvi48DNHUsHyiTdeGPcOfV89fLCnjHvaIa8vTPWQzMCaL92', NULL, '2025-11-28 21:01:14');
 
 --
 -- Índices para tabelas despejadas
@@ -101,19 +109,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de tabela `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `comment_likes`
 --
 ALTER TABLE `comment_likes`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restrições para tabelas despejadas
